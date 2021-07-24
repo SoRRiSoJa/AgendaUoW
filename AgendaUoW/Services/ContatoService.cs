@@ -22,12 +22,12 @@ namespace AgendaUoW.Services
         }
         public async Task<Contato> Editar(decimal idContato, Contato contato)
         {
-            var novoContato = await _contatoRepository.Obter(idContato);
             if (idContato == 0)
             {
                 throw new HttpResponseException(404, $"Você está me tirando? Forneça um id válido.");
             }
 
+            var novoContato = await _contatoRepository.Obter(idContato);
             if (novoContato == null)
             {
                 throw new HttpResponseException(401, $"Registro não encontarado");
@@ -54,7 +54,30 @@ namespace AgendaUoW.Services
 
         public async Task<bool> Excluir(decimal idContato)
         {
-            return await _contatoRepository.Excluir(idContato);
+            try
+            {
+                if (idContato == 0)
+                {
+                    throw new HttpResponseException(404, $"Você está me tirando? Forneça um id válido.");
+                }
+
+                var novoContato = await _contatoRepository.Obter(idContato);
+                if (novoContato == null)
+                {
+                    throw new HttpResponseException(401, $"Registro não encontarado");
+                }
+
+                _unitOfWork.BeginTransaction();
+                var result = await _contatoRepository.Excluir(idContato); ;
+                _unitOfWork.Commit();
+                return result;
+            }
+            catch (Exception)
+            {
+                _unitOfWork.Rollback();
+                throw new HttpResponseException(500, $"Ocorreu um erro ao excluir o registro.");
+            }
+            
         }
 
         public async Task<IEnumerable<Contato>> Listar()
