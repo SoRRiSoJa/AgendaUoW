@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using System.Globalization;
-
+using Microsoft.OpenApi.Models;
 namespace AgendaUoW
 {
+    using AgendaUoW.Domain.Models;
     using AgendaUoW.Domain.Repositories;
     using AgendaUoW.Domain.Services;
     using AgendaUoW.Domain.UoW;
@@ -17,7 +19,8 @@ namespace AgendaUoW
     using AgendaUoW.Persistence.Repositories;
     using AgendaUoW.Persistence.UoW;
     using AgendaUoW.Services;
-
+    using AgendaUoW.Validators;
+    
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -31,7 +34,7 @@ namespace AgendaUoW
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry();
-            services.AddControllers();
+            services.AddControllers().AddFluentValidation();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AgendaUoW", Version = "v1" });
@@ -85,6 +88,7 @@ namespace AgendaUoW
         }
         private void AddIoCValidations(IServiceCollection services)
         {
+            services.AddTransient<IValidator<Contato>, ContatoValidator>();
         }
         #endregion
     }

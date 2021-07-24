@@ -51,7 +51,6 @@ namespace AgendaUoW.Persistence.Repositories
             }
             catch (Exception)
             {
-
                 throw new HttpResponseException(401, $"nenhum registro encontrado");
             }
 
@@ -96,7 +95,6 @@ namespace AgendaUoW.Persistence.Repositories
             }
             catch (Exception)
             {
-
                 throw new HttpResponseException(401, $"Erro ao realizar consulta");
             }
 
