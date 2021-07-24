@@ -49,10 +49,7 @@ namespace AgendaUoW.Services
                     _unitOfWork.Rollback();
                     throw new HttpResponseException(500, $"Ocorreu um erro ao editar o registro.");
                 }
-                
             }
-
-            
         }
 
         public async Task<bool> Excluir(decimal idContato)
@@ -67,16 +64,30 @@ namespace AgendaUoW.Services
 
         public async Task<IEnumerable<Contato>> ObterPorNome(string nome)
         {
+            if (string.IsNullOrEmpty(nome))
+            {
+                throw new HttpResponseException(404, $"Você deve fornecer um nome válido.");
+            }
             return await _contatoRepository.ObterPorNome(nome);
         }
 
         public async Task<IEnumerable<Contato>> ObterPorNumero(string numero)
         {
+            if (string.IsNullOrEmpty(numero))
+            {
+                throw new HttpResponseException(404, $"Você deve fornecer um número válido.");
+            }
+
             return await _contatoRepository.ObterPorNumero(numero);
         }
 
         public async Task<Contato> Salvar(Contato contato)
         {
+            if (contato==null)
+            {
+                throw new HttpResponseException(404, $"Preencha os dados corretamente.");
+            }
+
             try
             {
                 _unitOfWork.BeginTransaction();
