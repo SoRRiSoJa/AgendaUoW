@@ -4,7 +4,7 @@ namespace AgendaUoW.Domain.UoW
 {
     public interface IUnitOfWork : IDisposable
     {
-        void Begintransaction();
+        void BeginTransaction();
         void Commit();
         void Rollback();
     }

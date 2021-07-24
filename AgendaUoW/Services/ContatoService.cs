@@ -49,7 +49,7 @@ namespace AgendaUoW.Services
         {
             try
             {
-                _unitOfWork.Begintransaction();
+                _unitOfWork.BeginTransaction();
                 var result= await _contatoRepository.Salvar(contato); ;
                 _unitOfWork.Commit();
                 return result;

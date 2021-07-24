@@ -12,7 +12,7 @@ namespace AgendaUoW.Persistence.UoW
             this._session = _session ?? throw new ArgumentNullException(nameof(_session));
         }
 
-        public void Begintransaction()
+        public void BeginTransaction()
         {
             _session.Transaction = _session.Connection.BeginTransaction();
         }
