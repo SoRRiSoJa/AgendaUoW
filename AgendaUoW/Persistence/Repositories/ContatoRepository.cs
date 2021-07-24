@@ -25,7 +25,6 @@ namespace AgendaUoW.Persistence.Repositories
             {
                 var query = "UPDATE contato SET nome=@Nome, numero=@Numero, ref=@Ref, isAtivo=@IsAtivo WHERE codigo=@Id)";
                 await _session.Connection.ExecuteAsync(query, new { contato.Nome, contato.Numero, contato.Ref, contato.IsAtivo, Id }, _session.Transaction);
-                _session.Transaction.Commit();
                 _session.Dispose();
                 return contato;
 
@@ -43,7 +42,6 @@ namespace AgendaUoW.Persistence.Repositories
             {
                 var query = "UPDATE contato SET isAtivo=0 WHERE codigo=@Id)";
                 await _session.Connection.ExecuteAsync(query, new { Id = idcontato }, _session.Transaction);
-                _session.Transaction.Commit();
                 _session.Dispose();
                 return true;
 
@@ -101,7 +99,6 @@ namespace AgendaUoW.Persistence.Repositories
             }
             catch (Exception)
             {
-
                 throw new HttpResponseException(401, $"Erro ao realizar consulta");
             }
 
@@ -130,13 +127,11 @@ namespace AgendaUoW.Persistence.Repositories
                 var query = "INSERT INTO contato (nome,numero,ref,isAtivo) OUTPUT INSERTED.codigo VALUES (@Nome,@Numero,@Ref,@IsAtivo)";
                 var idContato = await _session.Connection.ExecuteAsync(query, new { contato.Nome, contato.Numero, contato.Ref, contato.IsAtivo }, _session.Transaction);
                 contato.Id = idContato;
-                _session.Transaction.Commit();
                 _session.Dispose();
                 return contato;
             }
             catch (Exception)
             {
-                _session.Transaction.Rollback();
                 throw new HttpResponseException(500, $"Ocorreu um erro ao salvar o registro.");
             }
 

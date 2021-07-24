@@ -7,12 +7,17 @@ namespace AgendaUoW.Services
     using AgendaUoW.Domain.Models;
     using AgendaUoW.Domain.Repositories;
     using AgendaUoW.Domain.Services;
+    using AgendaUoW.Domain.UoW;
+    using AgendaUoW.Middlewares;
 
     public class ContatoService : IContatoService
     {
         private readonly IContatoRepository _contatoRepository;
-        public ContatoService(IContatoRepository _contatoRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public ContatoService(IUnitOfWork _unitOfWork, IContatoRepository _contatoRepository)
         {
+
+            this._unitOfWork = _unitOfWork ?? throw new ArgumentNullException(nameof(_unitOfWork));
             this._contatoRepository = _contatoRepository ?? throw new ArgumentNullException(nameof(_contatoRepository));
         }
         public async Task<Contato> Editar(int idContato, Contato contato)
@@ -42,7 +47,19 @@ namespace AgendaUoW.Services
 
         public async Task<Contato> Salvar(Contato contato)
         {
-            return await _contatoRepository.Salvar(contato); ;
+            try
+            {
+                _unitOfWork.Begintransaction();
+                var result= await _contatoRepository.Salvar(contato); ;
+                _unitOfWork.Commit();
+                return result;
+            }
+            catch (Exception)
+            {
+                _unitOfWork.Rollback();
+                throw new HttpResponseException(500, $"Ocorreu um erro ao salvar o registro.");
+            }
+            
         }
     }
 }
