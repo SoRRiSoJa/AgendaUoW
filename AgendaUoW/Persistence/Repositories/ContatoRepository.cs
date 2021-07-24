@@ -25,13 +25,11 @@ namespace AgendaUoW.Persistence.Repositories
             {
                 var query = "UPDATE contato SET nome=@Nome, numero=@Numero, ref=@Ref, isAtivo=@IsAtivo WHERE codigo=@Id)";
                 await _session.Connection.ExecuteAsync(query, new { contato.Nome, contato.Numero, contato.Ref, contato.IsAtivo, Id }, _session.Transaction);
-                _session.Dispose();
                 return contato;
 
             }
             catch (Exception)
             {
-                _session.Transaction.Rollback();
                 throw new HttpResponseException(500, $"Ocorreu um erro ao atualizar o registro.");
             }
         }
@@ -42,13 +40,11 @@ namespace AgendaUoW.Persistence.Repositories
             {
                 var query = "UPDATE contato SET isAtivo=0 WHERE codigo=@Id)";
                 await _session.Connection.ExecuteAsync(query, new { Id = idcontato }, _session.Transaction);
-                _session.Dispose();
                 return true;
 
             }
             catch (Exception)
             {
-                _session.Transaction.Rollback();
                 throw new HttpResponseException(500, $"Ocorreu um erro ao excluir o registro.");
             }
 
@@ -125,9 +121,8 @@ namespace AgendaUoW.Persistence.Repositories
             try
             {
                 var query = "INSERT INTO contato (nome,numero,ref,isAtivo) OUTPUT INSERTED.codigo VALUES (@Nome,@Numero,@Ref,@IsAtivo)";
-                var idContato = await _session.Connection.ExecuteAsync(query, new { contato.Nome, contato.Numero, contato.Ref, contato.IsAtivo }, _session.Transaction);
+                var idContato = await _session.Connection.QuerySingleAsync<int>(query, new { contato.Nome, contato.Numero, contato.Ref, contato.IsAtivo }, _session.Transaction);
                 contato.Id = idContato;
-                _session.Dispose();
                 return contato;
             }
             catch (Exception)
