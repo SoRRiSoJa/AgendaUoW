@@ -17,6 +17,7 @@ namespace AgendaUoW.Controllers
 
             this._contatoService = _contatoService ?? throw new ArgumentNullException(nameof(_contatoService));
         }
+
         [HttpPost]
         public async Task<ActionResult<Contato>> Salvar([FromBody] Contato contato)
         {
@@ -32,7 +33,7 @@ namespace AgendaUoW.Controllers
         {
             return Ok(await _contatoService.Excluir(idContato));
         }
-        [HttpGet()]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Contato>>> Listar()
         {
             return Ok(await _contatoService.Listar());

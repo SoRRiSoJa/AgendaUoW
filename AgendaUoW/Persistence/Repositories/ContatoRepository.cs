@@ -23,7 +23,7 @@ namespace AgendaUoW.Persistence.Repositories
         {
             try
             {
-                var query = "UPDATE Contato SET nome=@Nome, numero=@Numero, ref=@Ref, isAtivo=@IsAtivo WHERE codigo=@Id)";
+                var query = "UPDATE contato SET nome=@Nome, numero=@Numero, ref=@Ref, isAtivo=@IsAtivo WHERE codigo=@Id)";
                 await _session.Connection.ExecuteAsync(query, new { contato.Nome, contato.Numero, contato.Ref, contato.IsAtivo, Id }, _session.Transaction);
                 _session.Transaction.Commit();
                 return contato;
@@ -36,16 +36,29 @@ namespace AgendaUoW.Persistence.Repositories
             }
         }
 
-        public Task<bool> Excluir(decimal idcontato)
+        public async Task<bool> Excluir(decimal idcontato)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var query = "UPDATE contato SET isAtivo=0 WHERE codigo=@Id)";
+                await _session.Connection.ExecuteAsync(query, new { Id = idcontato }, _session.Transaction);
+                _session.Transaction.Commit();
+                return true;
+
+            }
+            catch (Exception)
+            {
+                _session.Transaction.Rollback();
+                throw new HttpResponseException(500, $"Ocorreu um erro ao excluir o registro.");
+            }
+            
         }
 
         public async Task<IEnumerable<Contato>> Listar()
         {
             try
             {
-                var query = "SELECT * FROM Contato WHERE isAtivo = 1";
+                var query = "SELECT * FROM contato WHERE isAtivo = 1";
                 var result= await _session.Connection.QueryAsync<Contato>(query, null, _session.Transaction);
                 return result;
             }
@@ -60,7 +73,7 @@ namespace AgendaUoW.Persistence.Repositories
         {
             try
             {
-                var query = "SELECT * FROM Contato WHERE codigo = @idcontato";
+                var query = "SELECT * FROM contato WHERE codigo = @idcontato AND isAtivo = 1";
                 return await _session.Connection.QueryFirstOrDefaultAsync<Contato>(query, new { idcontato }, _session.Transaction);
             }
             catch (Exception)
@@ -75,8 +88,10 @@ namespace AgendaUoW.Persistence.Repositories
         {
             try
             {
-                var query = "SELECT * FROM Contato WHERE nome like %@nome%";
-                return await _session.Connection.QueryAsync<Contato>(query, new { nome }, _session.Transaction);
+                
+                var query = $"SELECT * FROM contato WHERE nome like  @nome AND isAtivo = 1";
+                var result= await _session.Connection.QueryAsync<Contato>(query, new { nome=$"%{nome}%" }, _session.Transaction);
+                return result;
             }
             catch (Exception)
             {
@@ -90,8 +105,8 @@ namespace AgendaUoW.Persistence.Repositories
         {
             try
             {
-                var query = "SELECT * FROM Contato WHERE nome like %@numero%";
-                return await _session.Connection.QueryAsync<Contato>(query, new { numero }, _session.Transaction);
+                var query = "SELECT * FROM contato WHERE nome like @numero AND isAtivo = 1";
+                return await _session.Connection.QueryAsync<Contato>(query, new { numero=$"%{numero}%" }, _session.Transaction);
             }
             catch (Exception)
             {
@@ -104,7 +119,7 @@ namespace AgendaUoW.Persistence.Repositories
         {
             try
             {
-                var query = "INSERT INTO Contato (nome,numero,ref,isAtivo) OUTPUT INSERTED.codigo VALUES (@Nome,@Numero,@Ref,@IsAtivo)";
+                var query = "INSERT INTO contato (nome,numero,ref,isAtivo) OUTPUT INSERTED.codigo VALUES (@Nome,@Numero,@Ref,@IsAtivo)";
                 var idContato = await _session.Connection.ExecuteAsync(query, new { contato.Nome, contato.Numero, contato.Ref, contato.IsAtivo }, _session.Transaction);
                 contato.Id = idContato;
                 _session.Transaction.Commit();

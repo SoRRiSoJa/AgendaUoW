@@ -15,34 +15,34 @@ namespace AgendaUoW.Services
         {
             this._contatoRepository = _contatoRepository ?? throw new ArgumentNullException(nameof(_contatoRepository));
         }
-        public Task<Contato> Editar(int idContato, Contato contato)
+        public async Task<Contato> Editar(int idContato, Contato contato)
         {
-            throw new NotImplementedException();
+            return await _contatoRepository.Editar(idContato, contato);
         }
 
-        public Task<bool> Excluir(decimal idContato)
+        public async Task<bool> Excluir(decimal idContato)
         {
-            throw new NotImplementedException();
+            return await _contatoRepository.Excluir(idContato);
         }
 
-        public Task<IEnumerable<Contato>> Listar()
+        public  async Task<IEnumerable<Contato>> Listar()
         {
-            return _contatoRepository.Listar();
+            return await _contatoRepository.Listar();
         }
 
-        public Task<IEnumerable<Contato>> ObterPorNome(string nome)
+        public async  Task<IEnumerable<Contato>> ObterPorNome(string nome)
         {
-            throw new NotImplementedException();
+            return await _contatoRepository.ObterPorNome(nome);
         }
 
-        public Task<IEnumerable<Contato>> ObterPorNumero(string numero)
+        public async Task<IEnumerable<Contato>> ObterPorNumero(string numero)
         {
-            throw new NotImplementedException();
+            return await _contatoRepository.ObterPorNumero(numero);
         }
 
-        public Task<Contato> Salvar(Contato contato)
+        public async Task<Contato> Salvar(Contato contato)
         {
-            throw new NotImplementedException();
+            return await _contatoRepository.Salvar(contato); ;
         }
     }
 }
