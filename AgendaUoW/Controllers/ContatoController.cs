@@ -1,5 +1,7 @@
 ﻿using AgendaUoW.Domain.Models;
 using AgendaUoW.Domain.Services;
+using AgendaUoW.Resources;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,10 +14,12 @@ namespace AgendaUoW.Controllers
     public class ContatoController : ControllerBase
     {
         private readonly IContatoService _contatoService;
-        public ContatoController(IContatoService _contatoService)
+        private readonly IMapper _mapper;
+        public ContatoController(IContatoService _contatoService, IMapper _mapper)
         {
 
             this._contatoService = _contatoService ?? throw new ArgumentNullException(nameof(_contatoService));
+            this._mapper = _mapper ?? throw new ArgumentNullException(nameof(_mapper));
         }
 
         [HttpPost]
@@ -29,24 +33,24 @@ namespace AgendaUoW.Controllers
             return Ok(await _contatoService.Editar(idContato, contato));
         }
         [HttpDelete("{idAgenda}")]
-        public async Task<ActionResult<Contato>> Excluir(int idContato)
+        public async Task<ActionResult<bool>> Excluir(int idContato)
         {
             return Ok(await _contatoService.Excluir(idContato));
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Contato>>> Listar()
+        public async Task<ActionResult<IEnumerable<ContatoResource>>> Listar()
         {
-            return Ok(await _contatoService.Listar());
+            return Ok( _mapper.Map<IEnumerable<ContatoResource>>(await _contatoService.Listar()));
         }
         [HttpGet("numero/{numeroTelefone}")]
-        public async Task<ActionResult<IEnumerable<Contato>>> ConsultarPorNumero(string numeroTelefone)
+        public async Task<ActionResult<IEnumerable<ContatoResource>>> ConsultarPorNumero(string numeroTelefone)
         {
-            return Ok(await _contatoService.ObterPorNumero(numeroTelefone));
+            return Ok(_mapper.Map<IEnumerable<ContatoResource>>(await _contatoService.ObterPorNumero(numeroTelefone)));
         }
         [HttpGet("nome/{nome}")]
-        public async Task<ActionResult<IEnumerable<Contato>>> ConsultarPorNome(string nome)
+        public async Task<ActionResult<IEnumerable<ContatoResource>>> ConsultarPorNome(string nome)
         {
-            return Ok(await _contatoService.ObterPorNome(nome));
+            return Ok(_mapper.Map<IEnumerable<ContatoResource>>(await _contatoService.ObterPorNome(nome)));
         }
     }
 }

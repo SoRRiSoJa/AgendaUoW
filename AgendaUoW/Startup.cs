@@ -8,6 +8,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using System.Globalization;
 using Microsoft.OpenApi.Models;
+
 namespace AgendaUoW
 {
     using AgendaUoW.Domain.Models;
@@ -43,6 +44,7 @@ namespace AgendaUoW
             AddIoCRepositories(services);
             AddIoCServices(services);
             AddIoCValidations(services);
+            services.AddAutoMapper(typeof(Startup));
             services.AddHttpContextAccessor();
             RegisterMapping.Register();
 
