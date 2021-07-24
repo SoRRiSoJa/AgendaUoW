@@ -20,9 +20,39 @@ namespace AgendaUoW.Services
             this._unitOfWork = _unitOfWork ?? throw new ArgumentNullException(nameof(_unitOfWork));
             this._contatoRepository = _contatoRepository ?? throw new ArgumentNullException(nameof(_contatoRepository));
         }
-        public async Task<Contato> Editar(int idContato, Contato contato)
+        public async Task<Contato> Editar(decimal idContato, Contato contato)
         {
-            return await _contatoRepository.Editar(idContato, contato);
+            var novoContato = await _contatoRepository.Obter(idContato);
+            if (idContato == 0)
+            {
+                throw new HttpResponseException(404, $"Você está me tirando? Forneça um id válido.");
+            }
+
+            if (novoContato == null)
+            {
+                throw new HttpResponseException(401, $"Registro não encontarado");
+            }
+            else 
+            {
+                novoContato.Nome = contato.Nome;
+                novoContato.Numero = contato.Numero;
+                try
+                {
+                    _unitOfWork.BeginTransaction();
+                    novoContato = await _contatoRepository.Editar(idContato, novoContato);
+                    _unitOfWork.Commit();
+                    return novoContato;
+                }
+                catch (Exception)
+                {
+
+                    _unitOfWork.Rollback();
+                    throw new HttpResponseException(500, $"Ocorreu um erro ao editar o registro.");
+                }
+                
+            }
+
+            
         }
 
         public async Task<bool> Excluir(decimal idContato)
