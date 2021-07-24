@@ -26,6 +26,7 @@ namespace AgendaUoW.Persistence.Repositories
                 var query = "UPDATE contato SET nome=@Nome, numero=@Numero, ref=@Ref, isAtivo=@IsAtivo WHERE codigo=@Id)";
                 await _session.Connection.ExecuteAsync(query, new { contato.Nome, contato.Numero, contato.Ref, contato.IsAtivo, Id }, _session.Transaction);
                 _session.Transaction.Commit();
+                _session.Dispose();
                 return contato;
 
             }
@@ -43,6 +44,7 @@ namespace AgendaUoW.Persistence.Repositories
                 var query = "UPDATE contato SET isAtivo=0 WHERE codigo=@Id)";
                 await _session.Connection.ExecuteAsync(query, new { Id = idcontato }, _session.Transaction);
                 _session.Transaction.Commit();
+                _session.Dispose();
                 return true;
 
             }
@@ -60,6 +62,7 @@ namespace AgendaUoW.Persistence.Repositories
             {
                 var query = "SELECT * FROM contato WHERE isAtivo = 1";
                 var result = await _session.Connection.QueryAsync<Contato>(query, null, _session.Transaction);
+                _session.Dispose();
                 return result;
             }
             catch (Exception)
@@ -74,7 +77,9 @@ namespace AgendaUoW.Persistence.Repositories
             try
             {
                 var query = "SELECT * FROM contato WHERE codigo = @idcontato AND isAtivo = 1";
-                return await _session.Connection.QueryFirstOrDefaultAsync<Contato>(query, new { idcontato }, _session.Transaction);
+                var result = await _session.Connection.QueryFirstOrDefaultAsync<Contato>(query, new { idcontato }, _session.Transaction);
+                _session.Dispose();
+                return result;
             }
             catch (Exception)
             {
@@ -91,6 +96,7 @@ namespace AgendaUoW.Persistence.Repositories
 
                 var query = $"SELECT * FROM contato WHERE nome like  @nome AND isAtivo = 1";
                 var result = await _session.Connection.QueryAsync<Contato>(query, new { nome = $"%{nome}%" }, _session.Transaction);
+                _session.Dispose();
                 return result;
             }
             catch (Exception)
@@ -106,7 +112,9 @@ namespace AgendaUoW.Persistence.Repositories
             try
             {
                 var query = "SELECT * FROM contato WHERE nome like @numero AND isAtivo = 1";
-                return await _session.Connection.QueryAsync<Contato>(query, new { numero = $"%{numero}%" }, _session.Transaction);
+                var result = await _session.Connection.QueryAsync<Contato>(query, new { numero = $"%{numero}%" }, _session.Transaction);
+                _session.Dispose();
+                return result;
             }
             catch (Exception)
             {
@@ -123,6 +131,7 @@ namespace AgendaUoW.Persistence.Repositories
                 var idContato = await _session.Connection.ExecuteAsync(query, new { contato.Nome, contato.Numero, contato.Ref, contato.IsAtivo }, _session.Transaction);
                 contato.Id = idContato;
                 _session.Transaction.Commit();
+                _session.Dispose();
                 return contato;
             }
             catch (Exception)
