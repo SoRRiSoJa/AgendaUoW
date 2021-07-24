@@ -23,7 +23,7 @@ namespace AgendaUoW.Persistence.Config
             {
                 throw new HttpResponseException(500, $"Erro ao realizar conexão:{ex.Message}");
             }
-            
+
         }
         public void Dispose() => Connection?.Dispose();
 

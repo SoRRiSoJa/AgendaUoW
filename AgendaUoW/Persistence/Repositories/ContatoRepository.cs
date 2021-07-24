@@ -51,7 +51,7 @@ namespace AgendaUoW.Persistence.Repositories
                 _session.Transaction.Rollback();
                 throw new HttpResponseException(500, $"Ocorreu um erro ao excluir o registro.");
             }
-            
+
         }
 
         public async Task<IEnumerable<Contato>> Listar()
@@ -59,7 +59,7 @@ namespace AgendaUoW.Persistence.Repositories
             try
             {
                 var query = "SELECT * FROM contato WHERE isAtivo = 1";
-                var result= await _session.Connection.QueryAsync<Contato>(query, null, _session.Transaction);
+                var result = await _session.Connection.QueryAsync<Contato>(query, null, _session.Transaction);
                 return result;
             }
             catch (Exception)
@@ -81,16 +81,16 @@ namespace AgendaUoW.Persistence.Repositories
 
                 throw new HttpResponseException(401, $"Erro ao realizar consulta");
             }
-            
+
         }
 
         public async Task<IEnumerable<Contato>> ObterPorNome(string nome)
         {
             try
             {
-                
+
                 var query = $"SELECT * FROM contato WHERE nome like  @nome AND isAtivo = 1";
-                var result= await _session.Connection.QueryAsync<Contato>(query, new { nome=$"%{nome}%" }, _session.Transaction);
+                var result = await _session.Connection.QueryAsync<Contato>(query, new { nome = $"%{nome}%" }, _session.Transaction);
                 return result;
             }
             catch (Exception)
@@ -98,7 +98,7 @@ namespace AgendaUoW.Persistence.Repositories
 
                 throw new HttpResponseException(401, $"Erro ao realizar consulta");
             }
-            
+
         }
 
         public async Task<IEnumerable<Contato>> ObterPorNumero(string numero)
@@ -106,7 +106,7 @@ namespace AgendaUoW.Persistence.Repositories
             try
             {
                 var query = "SELECT * FROM contato WHERE nome like @numero AND isAtivo = 1";
-                return await _session.Connection.QueryAsync<Contato>(query, new { numero=$"%{numero}%" }, _session.Transaction);
+                return await _session.Connection.QueryAsync<Contato>(query, new { numero = $"%{numero}%" }, _session.Transaction);
             }
             catch (Exception)
             {

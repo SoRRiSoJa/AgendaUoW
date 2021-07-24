@@ -2,7 +2,7 @@
 namespace AgendaUoW.Resources.Profiles
 {
     using AgendaUoW.Domain.Models;
-    public class ContatoProfile:Profile
+    public class ContatoProfile : Profile
     {
         public ContatoProfile()
         {

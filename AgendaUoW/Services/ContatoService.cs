@@ -25,12 +25,12 @@ namespace AgendaUoW.Services
             return await _contatoRepository.Excluir(idContato);
         }
 
-        public  async Task<IEnumerable<Contato>> Listar()
+        public async Task<IEnumerable<Contato>> Listar()
         {
             return await _contatoRepository.Listar();
         }
 
-        public async  Task<IEnumerable<Contato>> ObterPorNome(string nome)
+        public async Task<IEnumerable<Contato>> ObterPorNome(string nome)
         {
             return await _contatoRepository.ObterPorNome(nome);
         }

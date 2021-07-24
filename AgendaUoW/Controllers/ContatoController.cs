@@ -40,7 +40,7 @@ namespace AgendaUoW.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ContatoResource>>> Listar()
         {
-            return Ok( _mapper.Map<IEnumerable<ContatoResource>>(await _contatoService.Listar()));
+            return Ok(_mapper.Map<IEnumerable<ContatoResource>>(await _contatoService.Listar()));
         }
         [HttpGet("numero/{numeroTelefone}")]
         public async Task<ActionResult<IEnumerable<ContatoResource>>> ConsultarPorNumero(string numeroTelefone)
